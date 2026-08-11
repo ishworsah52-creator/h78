@@ -1,0 +1,6 @@
+{
+  "name": "h78nepal",
+  "description": "Beauty Salon in Patan, Lalitpur - It's all about you 💕",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
