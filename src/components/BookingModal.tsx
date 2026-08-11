@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { X, Calendar, Phone, CheckCircle2, Send } from 'lucide-react';
+import { X, Calendar, Phone, CheckCircle2, Send, Mail, MessageCircle, Loader2, AlertCircle } from 'lucide-react';
 import { BUSINESS_INFO, SERVICE_ITEMS } from '../data/salonData';
 import { AppointmentFormData } from '../types';
 
@@ -23,6 +23,7 @@ export const BookingModal: React.FC<BookingModalProps> = ({
     notes: '',
   });
 
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitted, setSubmitted] = useState(false);
 
   useEffect(() => {
@@ -33,13 +34,73 @@ export const BookingModal: React.FC<BookingModalProps> = ({
 
   if (!isOpen) return null;
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const getWhatsAppLink = () => {
+    const text = encodeURIComponent(
+      `Hello h78nepal 💕, I would like to book an appointment:\n\n` +
+      `• Name: ${formData.name}\n` +
+      `• Phone: ${formData.phone}\n` +
+      `• Service: ${formData.service}\n` +
+      `• Date: ${formData.preferredDate || 'Flexible'}\n` +
+      `• Time: ${formData.preferredTime}\n` +
+      `• Notes: ${formData.notes || 'None'}`
+    );
+    return `https://wa.me/977${BUSINESS_INFO.phone}?text=${text}`;
+  };
+
+  const getMailtoLink = () => {
+    const subject = encodeURIComponent(`New Appointment Booking Request - ${formData.service}`);
+    const body = encodeURIComponent(
+      `Appointment Booking Request for h78nepal:\n\n` +
+      `Name: ${formData.name}\n` +
+      `Phone: ${formData.phone}\n` +
+      `Service Requested: ${formData.service}\n` +
+      `Preferred Date: ${formData.preferredDate || 'Flexible'}\n` +
+      `Preferred Time: ${formData.preferredTime}\n` +
+      `Additional Notes: ${formData.notes || 'None'}\n\n` +
+      `Sent via h78nepal website`
+    );
+    return `mailto:${BUSINESS_INFO.bookingEmail}?subject=${subject}&body=${body}`;
+  };
+
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setSubmitted(true);
+    setIsSubmitting(true);
+
+    const waUrl = getWhatsAppLink();
+
+    try {
+      // Fire-and-forget background email notification
+      fetch(`https://formsubmit.co/ajax/${BUSINESS_INFO.bookingEmail}`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Accept': 'application/json',
+        },
+        body: JSON.stringify({
+          _subject: `New Salon Appointment Request - ${formData.service} (${formData.name})`,
+          _template: 'table',
+          _captcha: 'false',
+          'Customer Name': formData.name,
+          'Phone Number': formData.phone,
+          'Service Requested': formData.service,
+          'Preferred Date': formData.preferredDate || 'Flexible',
+          'Preferred Time Slot': formData.preferredTime,
+          'Additional Notes': formData.notes || 'None',
+        }),
+      }).catch((err) => console.log('Email log background:', err));
+    } catch (err) {
+      console.error('Error submitting form:', err);
+    } finally {
+      setIsSubmitting(false);
+      setSubmitted(true);
+      // Immediately open WhatsApp chat with prefilled message
+      window.open(waUrl, '_blank', 'noopener,noreferrer');
+    }
   };
 
   const handleClose = () => {
     setSubmitted(false);
+    setIsSubmitting(false);
     onClose();
   };
 
@@ -170,42 +231,72 @@ export const BookingModal: React.FC<BookingModalProps> = ({
               <div className="pt-2">
                 <button
                   type="submit"
-                  className="w-full py-3 px-4 bg-pink-600 hover:bg-pink-700 text-white font-semibold rounded-xl shadow-md transition-all flex items-center justify-center gap-2"
+                  disabled={isSubmitting}
+                  className="w-full py-3.5 px-4 bg-emerald-600 hover:bg-emerald-700 disabled:bg-emerald-400 text-white font-semibold rounded-xl shadow-md transition-all flex items-center justify-center gap-2 cursor-pointer disabled:cursor-not-allowed"
                 >
-                  <Send className="w-4 h-4" />
-                  <span>Confirm Appointment Request</span>
+                  {isSubmitting ? (
+                    <>
+                      <Loader2 className="w-4 h-4 animate-spin" />
+                      <span>Opening WhatsApp...</span>
+                    </>
+                  ) : (
+                    <>
+                      <MessageCircle className="w-5 h-5" />
+                      <span>Send Appointment Message to WhatsApp ({BUSINESS_INFO.phoneDisplay})</span>
+                    </>
+                  )}
                 </button>
               </div>
 
-              <div className="text-center pt-2">
+              <div className="text-center pt-1">
                 <a
                   href={`tel:${BUSINESS_INFO.phone}`}
-                  className="inline-flex items-center gap-1.5 text-xs text-pink-600 font-semibold hover:underline"
+                  className="inline-flex items-center gap-1.5 text-xs text-slate-600 font-semibold hover:text-pink-600 hover:underline"
                 >
-                  <Phone className="w-3.5 h-3.5" /> Call directly: {BUSINESS_INFO.phoneDisplay}
+                  <Phone className="w-3.5 h-3.5 text-pink-600" /> Need quick help? Call {BUSINESS_INFO.phoneDisplay}
                 </a>
               </div>
             </form>
           ) : (
-            <div className="py-6 text-center space-y-4">
+            <div className="py-4 text-center space-y-3.5">
               <div className="w-14 h-14 bg-emerald-100 text-emerald-600 rounded-full flex items-center justify-center mx-auto">
-                <CheckCircle2 className="w-8 h-8" />
+                <MessageCircle className="w-8 h-8 text-emerald-600" />
               </div>
 
               <h3 className="font-serif text-xl font-bold text-slate-900">
-                Request Sent Successfully!
+                Opening WhatsApp...
               </h3>
 
               <p className="text-slate-600 text-xs sm:text-sm">
-                Thank you! We will reach out to <strong>{formData.phone}</strong> shortly to confirm your booking for <strong>{formData.service}</strong>.
+                Your appointment request for <strong>{formData.service}</strong> has been prepared for WhatsApp number <strong>9742871601</strong>.
               </p>
 
-              <button
-                onClick={handleClose}
-                className="w-full py-2.5 px-4 bg-slate-900 text-white font-semibold rounded-xl text-xs hover:bg-slate-800 transition-colors"
-              >
-                Close Window
-              </button>
+              <div className="bg-emerald-50 border border-emerald-200 p-3.5 rounded-2xl text-left text-xs text-emerald-950 space-y-1 max-w-sm mx-auto">
+                <p className="font-bold text-emerald-900 flex items-center gap-1.5">
+                  <CheckCircle2 className="w-4 h-4 text-emerald-600" /> Appointment Summary:
+                </p>
+                <p>• <strong>Name:</strong> {formData.name}</p>
+                <p>• <strong>Service:</strong> {formData.service}</p>
+                <p>• <strong>Date/Time:</strong> {formData.preferredDate || 'Flexible'} ({formData.preferredTime})</p>
+              </div>
+
+              <div className="flex flex-col gap-2 pt-1">
+                <a
+                  href={getWhatsAppLink()}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="w-full py-3 px-4 bg-emerald-600 hover:bg-emerald-700 text-white font-semibold rounded-xl text-xs transition-colors flex items-center justify-center gap-2 shadow-md"
+                >
+                  <MessageCircle className="w-4 h-4" /> Open WhatsApp Chat Again
+                </a>
+
+                <button
+                  onClick={handleClose}
+                  className="w-full py-2.5 px-4 bg-slate-900 text-white font-semibold rounded-xl text-xs hover:bg-slate-800 transition-colors mt-1"
+                >
+                  Done
+                </button>
+              </div>
             </div>
           )}
         </div>

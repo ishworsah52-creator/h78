@@ -46,6 +46,7 @@ export interface BusinessInfo {
   googleReviewCount: number;
   tagline: string;
   googleMapsUrl: string;
+  bookingEmail: string;
   socials: {
     instagram: string;
     tiktok: string;

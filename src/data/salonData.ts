@@ -1,4 +1,5 @@
 import { BusinessInfo, ServiceCategory, ServiceItem, ReviewItem, GalleryItem } from '../types';
+import salonInteriorPhoto from '../assets/images/salon_interior_main_1786473498209.jpg';
 
 export const BUSINESS_INFO: BusinessInfo = {
   name: 'h78nepal',
@@ -14,7 +15,8 @@ export const BUSINESS_INFO: BusinessInfo = {
   googleRating: 4.9,
   googleReviewCount: 143,
   tagline: 'It’s all about you 💕',
-  googleMapsUrl: 'https://www.google.com/maps/place/h78nepal,+Eti+Chowk,+Jana+Bahal+Rd,+Lalitpur+44600/@27.6702712,85.3224909,15z/',
+  googleMapsUrl: 'https://www.google.com/maps/place/h78nepal/@27.6702712,85.319916,873m/data=!3m2!1e3!4b1!4m6!3m5!1s0x39eb190a8b38129d:0x7b63c84f17bd4623!8m2!3d27.6702712!4d85.3224909!16s%2Fg%2F11rtlw7dz5?entry=ttu&g_ep=EgoyMDI2MDgwNS4xIKXMDSoASAFQAw%3D%3D',
+  bookingEmail: 'ishworsah63@gmail.com',
   socials: {
     instagram: 'https://instagram.com/h78nepal',
     tiktok: 'https://tiktok.com/@h78nepal',
@@ -180,10 +182,10 @@ export const SERVICE_ITEMS: ServiceItem[] = [
 export const GALLERY_ITEMS: GalleryItem[] = [
   {
     id: 'gal-1',
-    title: 'Salon Ambiance',
+    title: 'h78nepal Salon Interior & Mirrors',
     category: 'Interior',
-    imageUrl: 'https://images.unsplash.com/photo-1560066984-138dadb4c035?auto=format&fit=crop&q=80&w=900',
-    altText: 'h78nepal salon interior setting in Patan',
+    imageUrl: salonInteriorPhoto,
+    altText: 'h78nepal salon interior setting with illuminated oval mirrors in Patan',
   },
   {
     id: 'gal-2',

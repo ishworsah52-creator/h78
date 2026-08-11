@@ -1,5 +1,5 @@
 import React from 'react';
-import { Phone, MapPin, Clock, Heart, Instagram, Facebook } from 'lucide-react';
+import { Phone, MapPin, Clock, Heart, Instagram, Facebook, Mail } from 'lucide-react';
 import { BUSINESS_INFO } from '../data/salonData';
 
 export const Footer: React.FC = () => {
@@ -92,6 +92,13 @@ export const Footer: React.FC = () => {
                 <Phone className="w-4 h-4 text-pink-500 shrink-0" />
                 <a href={`tel:${BUSINESS_INFO.phone}`} className="hover:text-pink-400 text-slate-200 font-semibold">
                   {BUSINESS_INFO.phoneDisplay}
+                </a>
+              </div>
+
+              <div className="flex items-center gap-2.5">
+                <Mail className="w-4 h-4 text-pink-500 shrink-0" />
+                <a href={`mailto:${BUSINESS_INFO.bookingEmail}`} className="hover:text-pink-400 text-slate-200 font-semibold break-all">
+                  {BUSINESS_INFO.bookingEmail}
                 </a>
               </div>
 

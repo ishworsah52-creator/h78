@@ -1,6 +1,7 @@
 import React from 'react';
 import { Phone, Calendar, Star, MapPin, CheckCircle2 } from 'lucide-react';
 import { BUSINESS_INFO } from '../data/salonData';
+import salonHeroImage from '../assets/images/salon_interior_main_1786473498209.jpg';
 
 interface HeroProps {
   onOpenBooking: () => void;
@@ -106,7 +107,7 @@ export const Hero: React.FC<HeroProps> = ({ onOpenBooking }) => {
               {/* Main Image */}
               <div className="relative rounded-2xl overflow-hidden shadow-xl border-4 border-white aspect-[4/5] bg-pink-50">
                 <img
-                  src="https://images.unsplash.com/photo-1560066984-138dadb4c035?auto=format&fit=crop&q=80&w=1000"
+                  src={salonHeroImage}
                   alt="h78nepal Beauty Salon interior in Patan"
                   className="w-full h-full object-cover"
                 />
